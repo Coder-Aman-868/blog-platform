@@ -8,13 +8,15 @@ import CreatePost from "./pages/CreatePost";
 import EditPost from "./pages/EditPost";
 import SinglePost from "./pages/SinglePost";
 import Profile from "./pages/Profile";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <Router>
       <Navbar />
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/create" element={<CreatePost />} />
