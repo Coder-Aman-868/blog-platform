@@ -1,8 +1,14 @@
 import { useState } from "react";
+import axios from "axios";
 
 function Register() {
-    const [form, setForm] = useState({ name: "", email: "", password: "" });
-    const [message, setMessage] = useState("");
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: ""
+    });
+
+    const [message, setMessage] = useState(""); // 👈 Define message state
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -10,21 +16,53 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
-            const res = await axios.post("http://localhost:5000/api/auth/register", form);
-            setMessage(res.data.message);
-        } catch (err) {
-            setMessage(err.response?.data?.message || "Error occurred");
+            const res = await fetch("http://localhost:5000/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setMessage("Registration successful ✅");
+            } else {
+                setMessage(data.error || "Something went wrong ❌");
+            }
+        } catch (error) {
+            setMessage("Server error ❌");
         }
     };
+
     return (
-        <div className="max-w-sm mx-auto mt-10 p-6 border rounded">
-            <h1 className="text-2xl font-bold mb-4">Register</h1>
-            <input type="text" placeholder="Name" className="w-full border p-2 mb-3" />
-            <input type="email" placeholder="Email" className="w-full border p-2 mb-3" />
-            <input type="password" placeholder="Password" className="w-full border p-2 mb-3" />
-            <button className="w-full bg-green-600 text-white py-2 rounded">Register</button>
-        </div>
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                name="username"
+                placeholder="Username"
+                value={form.username}
+                onChange={handleChange}
+            />
+            <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={handleChange}
+            />
+            <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+            />
+            <button type="submit">Register</button>
+
+            {message && <p>{message}</p>} {/* 👈 Show message */}
+        </form>
     );
 }
 
